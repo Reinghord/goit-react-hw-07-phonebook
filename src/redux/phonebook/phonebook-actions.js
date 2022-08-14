@@ -1,9 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 
-const remove = createAction('phonebook/Remove');
-
 const changeFilter = createAction('phonebook/changeFilter');
 
-const actions = { remove, changeFilter };
+const actions = { changeFilter };
 
 export default actions;

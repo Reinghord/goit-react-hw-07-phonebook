@@ -1,19 +1,41 @@
-import axios from 'axios';
+// Need to use the React-specific entry point to import createApi
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-axios.defaults.baseURL =
-  'https://62f67ea5a3bce3eed7c28375.mockapi.io/contacts/';
+// Define a service using a base URL and expected endpoints
+export const mockApi = createApi({
+  reducerPath: 'mockApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://62f67ea5a3bce3eed7c28375.mockapi.io/contacts/',
+  }),
+  tagTypes: ['Contacts'],
+  endpoints: builder => ({
+    getAllContacts: builder.query({
+      query: () => `contacts/`,
+      providesTags: ['Contacts'],
+    }),
+    removeContactById: builder.mutation({
+      query(id) {
+        return { url: `contacts/${id}`, method: 'DELETE' };
+      },
+      invalidatesTags: ['Contacts'],
+    }),
+    postContactById: builder.mutation({
+      query(data) {
+        return {
+          url: `contacts/`,
+          method: 'POST',
+          body: data,
+        };
+      },
+      invalidatesTags: ['Contacts'],
+    }),
+  }),
+});
 
-export async function fetchContacts() {
-  const response = await axios.get('/contacts');
-  return response;
-}
-
-export async function postContacts(data) {
-  const response = await axios.post('/contacts', data);
-  return response.data;
-}
-
-export async function deleteContacts(id) {
-  const response = await axios.delete(`/contacts/${id}`);
-  return response.data;
-}
+// Export hooks for usage in functional components, which are
+// auto-generated based on the defined endpoints
+export const {
+  useGetAllContactsQuery,
+  useRemoveContactByIdMutation,
+  usePostContactByIdMutation,
+} = mockApi;
