@@ -1,23 +1,52 @@
-import { createReducer } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import { createReducer, combineReducers } from '@reduxjs/toolkit';
 import actions from './phonebook-actions';
+import {
+  fetchContacts,
+  postContacts,
+  deleteContacts,
+} from './phonebook-operations';
 
-const contacts = createReducer(
-  JSON.parse(localStorage.getItem('contacts')) ?? [
-    { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-    { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-    { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-    { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-  ],
-  {
-    [actions.add]: (state, action) => [...state, action.payload],
-    [actions.remove]: (state, action) =>
-      state.filter(({ id }) => id !== action.payload),
-  }
-);
+const entities = createReducer([], {
+  [fetchContacts.fulfilled]: (_, action) => action.payload,
+  [postContacts.fulfilled]: (state, action) => [...state, action.payload],
+  [deleteContacts.fulfilled]: (state, action) =>
+    state.filter(({ id }) => id !== action.payload),
+});
+
+const isLoading = createReducer(false, {
+  [fetchContacts.pending]: () => true,
+  [fetchContacts.fulfilled]: () => false,
+  [fetchContacts.rejected]: () => false,
+  [postContacts.pending]: () => true,
+  [postContacts.fulfilled]: () => false,
+  [postContacts.rejected]: () => false,
+  [deleteContacts.pending]: () => true,
+  [deleteContacts.fulfilled]: () => false,
+  [deleteContacts.rejected]: () => false,
+});
+
+const error = createReducer(null, {
+  [fetchContacts.rejected]: (_, action) => action.payload,
+  [fetchContacts.pending]: () => null,
+  [postContacts.rejected]: (_, action) => action.payload,
+  [postContacts.pending]: () => null,
+  [deleteContacts.rejected]: (_, action) => action.payload,
+  [deleteContacts.pending]: () => null,
+});
+
+// const contacts = createReducer([], {
+//   [actions.add]: (state, action) => [...state, action.payload],
+//   [actions.remove]: (state, action) =>
+//     state.filter(({ id }) => id !== action.payload),
+// // });
 
 const filter = createReducer('', {
   [actions.changeFilter]: (_, action) => action.payload,
 });
 
-export default combineReducers({ contacts, filter });
+export default combineReducers({
+  entities,
+  isLoading,
+  error,
+  filter,
+});

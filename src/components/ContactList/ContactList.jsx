@@ -1,15 +1,27 @@
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import actions from 'redux/phonebook/phonebook-actions';
-import { getContacts, getFilter } from 'redux/phonebook/phonebook-selectors';
+// import actions from 'redux/phonebook/phonebook-actions';
+import { getEntities, getFilter } from 'redux/phonebook/phonebook-selectors';
+import {
+  fetchContacts,
+  deleteContacts,
+} from 'redux/phonebook/phonebook-operations';
 // import PropTypes from 'prop-types';
 import s from './ContactList.module.css';
 
 function ContactList() {
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(getEntities);
   const filter = useSelector(getFilter);
 
   const dispatch = useDispatch();
-  const onDelete = id => dispatch(actions.remove(id));
+  const onDelete = async id => {
+    await dispatch(deleteContacts(id));
+    dispatch(fetchContacts());
+  };
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   return (
     <>
@@ -21,7 +33,7 @@ function ContactList() {
           .map(contact => {
             return (
               <li className={s.item} key={contact.id}>
-                {contact.name}: {contact.number}{' '}
+                {contact.name}: {contact.phone}{' '}
                 <button
                   className={s.button}
                   onClick={() => {

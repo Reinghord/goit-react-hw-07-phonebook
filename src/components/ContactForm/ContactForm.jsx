@@ -1,19 +1,20 @@
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // import PropTypes from 'prop-types';
-import actions from 'redux/phonebook/phonebook-actions';
-import { getContacts } from 'redux/phonebook/phonebook-selectors';
+// import actions from 'redux/phonebook/phonebook-actions';
+import { getEntities } from 'redux/phonebook/phonebook-selectors';
+import { postContacts } from 'redux/phonebook/phonebook-operations';
 import s from './ContactForm.module.css';
 
 function ContactForm() {
   const [userName, setUserName] = useState('');
   const [number, setNumber] = useState('');
 
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(getEntities);
 
   const dispatch = useDispatch();
   const onSubmit = (userName, number) =>
-    dispatch(actions.add(userName, number));
+    dispatch(postContacts({ name: userName, phone: number }));
 
   const onHandle = e => {
     const { name, value } = e.currentTarget;
