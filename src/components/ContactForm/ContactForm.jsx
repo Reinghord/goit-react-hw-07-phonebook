@@ -1,15 +1,18 @@
 import { useState } from 'react';
-import {
-  usePostContactByIdMutation,
-  useGetAllContactsQuery,
-} from 'services/mock-api';
+import { useSelector, useDispatch } from 'react-redux';
+// import PropTypes from 'prop-types';
 import s from './ContactForm.module.css';
+import { addContacts } from 'redux/phonebook/phonebook-operations';
 
 function ContactForm() {
   const [userName, setUserName] = useState('');
   const [number, setNumber] = useState('');
-  const [postContacts] = usePostContactByIdMutation();
-  const { data: contacts } = useGetAllContactsQuery();
+
+  const contacts = useSelector(state => state.contacts.data);
+
+  const dispatch = useDispatch();
+  const onSubmit = (userName, number) =>
+    dispatch(addContacts({ userName, number }));
 
   const onHandle = e => {
     const { name, value } = e.currentTarget;
@@ -31,7 +34,7 @@ function ContactForm() {
     if (contacts.find(contact => contact.name === userName)) {
       return alert(`${userName} is already in contacts.`);
     }
-    postContacts({ name: userName, phone: number });
+    onSubmit(userName, number);
     setUserName('');
     setNumber('');
   };
@@ -51,6 +54,9 @@ function ContactForm() {
         title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
         required
         onChange={onHandle}
+        // onChange={e => {
+        //   setUserName(e.currentTarget.value);
+        // }}
       />
       <label className={s.label} htmlFor="number">
         Number
@@ -64,6 +70,9 @@ function ContactForm() {
         title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
         required
         onChange={onHandle}
+        // onChange={e => {
+        //   setNumber(e.currentTarget.value);
+        // }}
       />
       <button className={s.button} type="submit">
         Add Contact
@@ -71,4 +80,7 @@ function ContactForm() {
     </form>
   );
 }
+
+// ContactForm.propTypes = { onSubmit: PropTypes.func.isRequired };
+
 export default ContactForm;

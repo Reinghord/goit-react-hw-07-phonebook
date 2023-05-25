@@ -1,21 +1,19 @@
-import { useSelector } from 'react-redux';
-import { getFilter } from 'redux/phonebook/phonebook-selectors';
-import {
-  useGetAllContactsQuery,
-  useRemoveContactByIdMutation,
-} from 'services/mock-api';
+import { useSelector, useDispatch } from 'react-redux';
+// import PropTypes from 'prop-types';
 import s from './ContactList.module.css';
-
+import { removeContacts } from 'redux/phonebook/phonebook-operations';
 function ContactList() {
-  const filter = useSelector(getFilter);
-  const [removeContact] = useRemoveContactByIdMutation();
-  const { data } = useGetAllContactsQuery();
+  const contacts = useSelector(state => state.contacts.data);
+  const filter = useSelector(state => state.filter);
+
+  const dispatch = useDispatch();
+  const onDelete = id => dispatch(removeContacts(id));
 
   return (
     <>
       <ul>
-        {data &&
-          data
+        {contacts.length > 0 &&
+          contacts
             .filter(contact => {
               return contact.name.toLowerCase().includes(filter.toLowerCase());
             })
@@ -26,7 +24,7 @@ function ContactList() {
                   <button
                     className={s.button}
                     onClick={() => {
-                      removeContact(contact.id);
+                      onDelete(contact.id);
                     }}
                   >
                     Delete
@@ -38,5 +36,10 @@ function ContactList() {
     </>
   );
 }
+
+// ContactList.propTypes = {
+//   appState: PropTypes.object.isRequired,
+//   onDelete: PropTypes.func.isRequired,
+// };
 
 export default ContactList;

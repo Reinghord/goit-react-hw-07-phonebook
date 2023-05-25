@@ -1,14 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux';
-import actions from 'redux/phonebook/phonebook-actions';
-import { getFilter } from 'redux/phonebook/phonebook-selectors';
-// import PropTypes from 'prop-types';
 import s from './Filter.module.css';
+import { changeFilter } from 'redux/phonebook/phonebook-reducer';
 
 function Filter() {
-  const filter = useSelector(getFilter);
+  const filter = useSelector(state => state.filter);
 
   const dispatch = useDispatch();
-  const onFilter = e => dispatch(actions.changeFilter(e.target.value));
+  const onFilter = e => dispatch(changeFilter(e.target.value));
 
   return (
     <>
@@ -28,7 +26,5 @@ function Filter() {
     </>
   );
 }
-
-// Filter.propTypes = { onFilter: PropTypes.func.isRequired };
 
 export default Filter;
