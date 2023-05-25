@@ -9,7 +9,6 @@ export async function getContacts() {
 }
 
 export async function postContacts(data) {
-  console.log(data);
   const response = await axios.post('/contacts', data);
   return response.data;
 }
